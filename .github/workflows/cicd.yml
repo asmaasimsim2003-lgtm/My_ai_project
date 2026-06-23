@@ -39,3 +39,14 @@ jobs:
           sudo docker stop my-app-container || true
           sudo docker rm my-app-container || true
           sudo docker run -d --name my-app-container -p 80:80 ${{ secrets.DOCKERHUB_USERNAME }}/my-app:latest
+    - name: Deploy to Server
+           uses: appleboy/ssh-action@v1.0.3
+           with:
+             host: ${{ secrets.HOST_IP }}
+             username: ${{ secrets.HOST_USERNAME }}
+             key: ${{ secrets.HOST_SSH_KEY }}
+             script: |
+               cd ~/my_ai_project
+               git pull origin master
+               docker-compose down
+               docker-compose up -d --build
