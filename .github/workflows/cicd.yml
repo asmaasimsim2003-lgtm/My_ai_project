@@ -14,8 +14,12 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          timeout: 10m  # هنا زودنا الوقت عشان الـ build ميعملش timeout
           script: |
             cd ~/my_ai_project
             git pull
-            sudo docker compose down
+            # مسح أي حاجة معلقة عشان البورتات تفك
+            sudo docker compose down --remove-orphans
+            sudo docker container prune -f
+            # تشغيل المشروع من جديد
             sudo docker compose up -d --build
